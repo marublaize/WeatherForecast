@@ -1,8 +1,10 @@
-# C# SignIn Project
+# Weather Forecast Sample Project
+
+![Weather Report](https://static.wikia.nocookie.net/jjba/images/3/38/WeatherReport_young.png)
 
 ## Introduction
 
-This project is a simple C$ application that demonstrates a sign-in functionality. It creates a backend to provide a sign-in interface for the users.
+This project is a simple C# backend with React that demonstrates a sign-in functionality. It creates a backend to provide a sign-in interface for the users.
 
 ## Installation
 
@@ -10,9 +12,8 @@ To set up this project locally, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Navigate to the project directory.
-3. Run `dotnet restore "backend.csproj"` to install the necessary dependencies.
-4. Run `dotnet build "backend.csproj" -c Release -o /app/build` to build the application.
-5. Run `dotnet publish "backend.csproj" -c Release -o /app/publish` to start the development server. The app will be available at `http://localhost:8080`.
+3. Run `docker compose up -d` and be happy.
+4. Backend will be available at `http://localhost:7175` and frontend will be available at `http://localhost:3000`
 
 ## Usage
 
