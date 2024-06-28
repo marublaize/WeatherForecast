@@ -1,19 +1,17 @@
-version: '3.8'
-
 services:
   backend:
-    container_name: davi-cors-backend
     build:
       context: .
       dockerfile: Dockerfile.backend
+    image: backend:latest
     ports:
       - "7175:8080"
 
   frontend:
-    container_name: davi-cors-frontend
     build:
       context: .
       dockerfile: Dockerfile.frontend
+    image: frontend:latest
     ports:
       - "3000:80"
     depends_on:
