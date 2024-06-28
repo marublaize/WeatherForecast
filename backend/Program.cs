@@ -4,10 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace MyApp
 {
@@ -30,6 +34,24 @@ namespace MyApp
             });
             builder.Services.AddControllers();
 
+            var key = Encoding.ASCII.GetBytes("MyAwesomeSecretKey"); // TODO: Change it to use a real key
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "JwtBearer";
+                options.DefaultChallengeScheme = "JwtBearer";
+            })
+            .AddJwtBearer("JwtBearer", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -37,6 +59,17 @@ namespace MyApp
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler("/error");
+
+            // CORS policy for allowing all origins
+            app.UseCors("AllowAllOrigins");
+
+            app.UseHttpsRedirection();
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             var summaries = new[]
             {
@@ -56,11 +89,9 @@ namespace MyApp
                 return forecast;
             })
             .WithName("GetWeatherForecast")
-            .WithOpenApi();
-
-            void LoginRequest(string email, string password)
-            {
-            }
+            .WithOpenApi()
+            // Require authorization to access this endpoint
+            .RequireAuthorization();
 
             app.MapPost("/Auth/login", async (HttpContext context) =>
             {
@@ -68,7 +99,17 @@ namespace MyApp
 
                 if (request?.Email == "test@example.com" && request?.Password == "password")
                 {
-                    return Results.Ok(new { Token = "MyAwesomeToken" });
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[] { new Claim("id", Guid.NewGuid().ToString()) }),
+                        Expires = DateTime.UtcNow.AddHours(1),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var tokenString = tokenHandler.WriteToken(token);
+
+                    return Results.Ok(new { Token = tokenString });
                 }
                 else
                 {
@@ -76,7 +117,6 @@ namespace MyApp
                 }
             });
 
-            app.UseCors("AllowAllOrigins");
             app.MapControllers();
 
             app.Run();
@@ -86,5 +126,11 @@ namespace MyApp
     record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     {
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public class LoginRequest
+    {
+        public string? Email { get; set; }
+        public string? Password { get; set; }
     }
 }
