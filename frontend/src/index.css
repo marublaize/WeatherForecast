@@ -1,0 +1,72 @@
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+}
+
+input[type="email"],
+input[type="password"] {
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* Ensures padding is included in width */
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto; /* Center the input boxes */
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  max-width: 390px;
+  margin: 0 auto; /* Center the input boxes */
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
